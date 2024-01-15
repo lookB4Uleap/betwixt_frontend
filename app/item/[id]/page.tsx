@@ -8,7 +8,7 @@ export default function Page({ params }: { params: { id: string } }) {
         <>
             <Main />
             <div className="pt-6">
-            <ItemContainer />
+            <ItemContainer id={params.id} />
         </div>
         </>
         

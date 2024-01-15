@@ -1,20 +1,30 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
 import Image from "next/image";
 import { Button, ButtonGroup } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useItem } from "../../../../hooks/useItem";
+import { useCart } from "@/hooks/useCart";
+
+interface ItemContainerProps {
+    id: string;
+}
 
 function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 
-const ItemContainer = () => {
+const ItemContainer = (props: ItemContainerProps) => {
     const reviews = { href: "#", average: 4, totalCount: 117 };
+    const {item, loading, error} = useItem(props.id);
+    const {cartItems, addToCart, removeFromCart} = useCart();
+    
 
+    // console.log(item, item?.quantity);
     return (
         <>
             {/* // Image Container */}
@@ -23,7 +33,8 @@ const ItemContainer = () => {
                     <Image
                         width={400}
                         height={400}
-                        src="https://picsum.photos/seed/picsum/400/400"
+                        // src="https://picsum.photos/seed/picsum/400/400"
+                        src={item?.item?.images[0] ?? ""}
                         alt="item image"
                         className="h-full w-full object-cover object-center"
                     />
@@ -33,7 +44,8 @@ const ItemContainer = () => {
                         <Image
                             width={400}
                             height={400}
-                            src="https://picsum.photos/seed/picsum/400/400"
+                            // src="https://picsum.photos/seed/picsum/400/400"
+                            src={item?.item?.images[0] ?? ""}
                             alt="item image"
                             className="h-full w-full object-cover object-center"
                         />
@@ -42,7 +54,8 @@ const ItemContainer = () => {
                         <Image
                             width={400}
                             height={400}
-                            src="https://picsum.photos/seed/picsum/400/400"
+                            // src="https://picsum.photos/seed/picsum/400/400"
+                            src={item?.item?.images[0] ?? ""}
                             alt="item image"
                             className="h-full w-full object-cover object-center"
                         />
@@ -52,7 +65,8 @@ const ItemContainer = () => {
                     <Image
                         width={400}
                         height={400}
-                        src="https://picsum.photos/seed/picsum/400/400"
+                        // src="https://picsum.photos/seed/picsum/400/400"
+                        src={item?.item?.images[0] ?? ""}
                         alt="item image"
                         className="h-full w-full object-cover object-center"
                     />
@@ -67,7 +81,7 @@ const ItemContainer = () => {
                     lg:pr-8"
                 >
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-3xl">
-                        Product Name
+                        {item?.item?.dish_name}
                     </h1>
                 </div>
 
@@ -75,7 +89,7 @@ const ItemContainer = () => {
                 <div className="mt-4 lg:row-span-3 lg:mt-0">
                     <h2 className="sr-only">Product information</h2>
                     <p className="text-3xl tracking-tight text-gray-900 dark:text-gray-50">
-                        Product Price
+                        {`${"\u20B9"} ${item?.item?.price}`}
                     </p>
 
                     {/* Reviews */}
@@ -196,7 +210,7 @@ const ItemContainer = () => {
                                     Quantity
                                 </div>
                                 <div className="ml-3 font-light text-gray-700 dark:text-gray-100">
-                                    2
+                                    {item?.quantity ?? 0}
                                 </div>
                                 <div className="sm:hidden h-8 flex-1 justify-self-center"></div>
                                 <div className="sm:hidden h-8 flex-1 border-l border-solid ml-3 border-gray-800 dark:border-gray-200 justify-self-center"></div>
@@ -210,7 +224,11 @@ const ItemContainer = () => {
                         bg-indigo-700 dark:bg-transparent 
                         hover:bg-indigo-800 dark:hover:bg-gray-800 dark:hover:opacity-90
                         dark:border-gray-400"
-                                    onClick={(e) => e.preventDefault()}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        addToCart(item);
+                                        // quantity && setQuantity(() => quantity+1);
+                                    }}
                                 >
                                     <AddIcon
                                         sx={{ fontSize: 15 }}
@@ -222,7 +240,11 @@ const ItemContainer = () => {
                     bg-indigo-700 dark:bg-transparent 
                     hover:bg-indigo-800 dark:hover:bg-gray-800 dark:hover:opacity-90
                     dark:border-gray-400"
-                                    onClick={(e) => e.preventDefault()}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        removeFromCart(item);
+                                        // quantity && setQuantity(() => quantity > 0 ? quantity - 1 : quantity);
+                                    }}
                                 >
                                     <RemoveIcon
                                         sx={{ fontSize: 15 }}
@@ -262,7 +284,8 @@ const ItemContainer = () => {
 
                         <div className="space-y-6">
                             <p className="text-base text-gray-900 dark:text-gray-200">
-                                Item Description
+                                {/* Item Description */}
+                                {item?.item?.description}
                             </p>
                         </div>
                     </div>
@@ -296,18 +319,21 @@ const ItemContainer = () => {
                             </ul>
                         </div>
                     </div>
-
+                    
+                    {item?.item?.dishDetails?.ingredients &&
                     <div className="mt-10">
                         <h2 className="text-sm font-medium text-gray-900 dark:text-gray-50">
                             Details
                         </h2>
-
+                        
                         <div className="mt-4 space-y-6">
                             <p className="text-sm text-gray-600 dark:text-gray-200">
-                                Product Details
+                                {/* Product Details */}
+                                {item.item?.dishDetails?.ingredients}
                             </p>
                         </div>
                     </div>
+                    }
                 </div>
             </div>
         </>

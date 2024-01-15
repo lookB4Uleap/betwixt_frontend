@@ -1,15 +1,26 @@
 "use client"
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import MenuSection from './MenuSection';
+import { useMenu } from '../_hooks/useMenu';
+import MenuContainerSkeleton from './MenuContainerSkeleton';
 
 function MenuContainer() {
+    const {menu, loading, error} = useMenu();
+
+    if (loading)
+        return <MenuContainerSkeleton />
+
     return (
         <div className='min-w-full flex-col'>
-            <MenuSection />
-            <MenuSection />
-            <MenuSection />
-            <MenuSection />
+            {
+                Object.keys(menu).map(
+                    section => <MenuSection key={section} header={section} items={menu[section as keyof typeof menu]} />)
+            }
+            {/* <MenuSection header='Section' />
+            <MenuSection header='Section' />
+            <MenuSection header='Section' />
+            <MenuSection header='Section' /> */}
         </div>
     );
 };

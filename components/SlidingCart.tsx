@@ -1,7 +1,9 @@
+"use client"
 import { Fragment, useContext, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { SlidingCartContext } from '@/context/SlidingCartContext'
+import { useCart } from '@/hooks/useCart'
 
 type SlidingCartProps = {
     open: boolean,
@@ -36,6 +38,7 @@ const products = [
 export default function SlidingCart() {
 //   const [open, setOpen] = useState(true)
 const context = useContext(SlidingCartContext);
+const {cartItems, addToCart, removeFromCart, totalAmount} = useCart();
 
   return (
     <Transition.Root show={context.open} as={Fragment}>
@@ -85,12 +88,12 @@ const context = useContext(SlidingCartContext);
                       <div className="mt-8">
                         <div className="flow-root">
                           <ul role="list" className="-my-6 divide-y divide-gray-200">
-                            {products.map((product) => (
-                              <li key={product.id} className="flex py-6">
+                            {Object.keys(cartItems).map((id: string) => (
+                              <li key={cartItems[id].item._id} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                   <img
-                                    src={product.imageSrc}
-                                    alt={product.imageAlt}
+                                    src={cartItems[id].item.images[0]}
+                                    alt="Food Image"
                                     className="h-full w-full object-cover object-center"
                                   />
                                 </div>
@@ -99,14 +102,14 @@ const context = useContext(SlidingCartContext);
                                   <div>
                                     <div className="flex justify-between text-base font-medium text-gray-900">
                                       <h3>
-                                        <a href={product.href}>{product.name}</a>
+                                        <a href={`/item/${cartItems[id].item._id}`}>{cartItems[id].item.dish_name}</a>
                                       </h3>
-                                      <p className="ml-4">{product.price}</p>
+                                      <p className="ml-4">{`${"\u20B9"} ${cartItems[id].item.price}`}</p>
                                     </div>
-                                    <p className="mt-1 text-sm text-gray-500">{product.color}</p>
+                                    {/* <p className="mt-1 text-sm text-gray-500">{product.color}</p> */}
                                   </div>
                                   <div className="flex flex-1 items-end justify-between text-sm">
-                                    <p className="text-gray-500">Qty {product.quantity}</p>
+                                    <p className="text-gray-500">Qty {cartItems[id].quantity}</p>
 
                                     <div className="flex">
                                       <button
@@ -128,7 +131,7 @@ const context = useContext(SlidingCartContext);
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <p>Subtotal</p>
-                        <p>$262.00</p>
+                        <p>{`${"\u20B9"} ${totalAmount ?? 0}`}</p>
                       </div>
                       <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                       <div className="mt-6">
